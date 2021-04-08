@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        h1 {
+            overflow: hidden;
+        }
+        span {
+            display: inline-block;
+            margin-left: -10px;
+            opacity: 0;
+            transform: translateY(-40px);
+        }
+        span:nth-child(1) {margin-left: 0;}
+    </style>
+</head>
+<body>
+    <h1>
+        <span id="creative-c">c</span>
+        <span id="creative-r">r</span>
+        <span id="creative-e">e</span>
+        <span id="creative-a">a</span>
+        <span id="creative-t">t</span>
+        <span id="creative-i">i</span>
+        <span id="creative-v">v</span>
+        <span id="creative-ee">e</span>
+    </h1>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.1/gsap.min.js"></script>
+    <script>
+        window.onload = () => {
+            setTimeout(()=>{
+                const titleText = document.querySelectorAll('h1 > span');
+
+                const listItems = [
+                    { name: `#${titleText[0].id}`, delay: '0.2', },
+                    { name: `#${titleText[1].id}`, delay: '0.4', },
+                    { name: `#${titleText[2].id}`, delay: '0.6', },
+                    { name: `#${titleText[3].id}`, delay: '0.8', },
+                    { name: `#${titleText[4].id}`, delay: '1.0', },
+                    { name: `#${titleText[5].id}`, delay: '1.2', },
+                    { name: `#${titleText[6].id}`, delay: '1.4', },
+                    { name: `#${titleText[7].id}`, delay: '1.6', }
+                ];
+
+                listItems.map((item) => (
+                    gsap.to(`${item.name}`, {opacity: 1, translateY: 0, delay: `${item.delay}`})
+                ))
+            }, 500)
+        }
+    </script>
+</body>
+</html>

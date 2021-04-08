@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+  <g id="state" transform="translate(-1142 -95)">
+    <rect id="Image" width="80" height="80" rx="40" transform="translate(1142 95)" fill="#e4e4e4"/>
+    <g id="icon_plus" transform="translate(1170 123)">
+      <path id="Boundary" d="M0,0H24V24H0Z" fill="none"/>
+      <line id="line" x1="18" transform="translate(3 12)" fill="none" stroke="#a7d8d5" stroke-linecap="round" stroke-miterlimit="10" stroke-width="1.5"/>
+      <line id="line-2" data-name="line" y1="18" transform="translate(12 3)" fill="none" stroke="#a7d8d5" stroke-linecap="round" stroke-miterlimit="10" stroke-width="1.5"/>
+    </g>
+  </g>
+</svg>
