@@ -29,7 +29,7 @@ const VideoSection = styled.div`
 //   height: 100%;
 // `;
 
-const PlayerFrame = ({ title, videos }) => {
+const PlayerFrame = ({ title, videos, exitRoom }) => {
   const [playerState, setPlayerState] = useState();
   const [index, setIndex] = useState(0);
   const playerWidth = "calc(100% - 240px)";
@@ -42,7 +42,9 @@ const PlayerFrame = ({ title, videos }) => {
 
   return (
     <Container width={playerWidth}>
-      <PlayerHeader width={playerWidth}>{title}</PlayerHeader>
+      <PlayerHeader width={playerWidth} exitRoom={exitRoom}>
+        {title}
+      </PlayerHeader>
       <VideoSection>
         <YouTube
           videoId={

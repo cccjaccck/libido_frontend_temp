@@ -1,4 +1,4 @@
-import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import PlayerChat from "./MainComponents/PlayerChat";
@@ -234,7 +234,9 @@ const Player = ({ match }) => {
     });
 
   // exitRoom
-  const [exitRoom] = useMutation(EXIT_ROOM);
+  const [exitRoomMutation] = useMutation(EXIT_ROOM);
+
+  const exitRoom = async () => exitRoomMutation();
 
   useEffect(() => exitRoom, []);
 
@@ -244,6 +246,7 @@ const Player = ({ match }) => {
         <PlayerFrame
           title={data?.seeRoom?.title}
           videos={data?.seeRoom?.videos}
+          exitRoom={exitRoom}
         />
         <ChatContainer>
           <PlayerProfile

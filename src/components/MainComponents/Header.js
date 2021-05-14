@@ -211,23 +211,29 @@ export const HeaderSearch = withRouter(
   }
 );
 
-export const PlayerHeader = withRouter(({ children, width, history }) => {
-  const goBack = () => {
-    history.go(-1);
-  };
+export const PlayerHeader = withRouter(
+  ({ children, width, history, exitRoom }) => {
+    const goBack = async () => {
+      const yes = await window.confirm("라이브를 종료하시겠습니까?");
+      if (yes) {
+        await exitRoom();
+      }
+      history.go(-1);
+    };
 
-  return (
-    <PlayerHeaderContainer width={width}>
-      <UnderLine />
-      <MdArrowBack
-        style={{
-          zIndex: "999",
-        }}
-        size={24}
-        color={"#4C5264"}
-        onClick={goBack}
-      />
-      <Title isPlayer={true}>{children}</Title>
-    </PlayerHeaderContainer>
-  );
-});
+    return (
+      <PlayerHeaderContainer width={width}>
+        <UnderLine />
+        <MdArrowBack
+          style={{
+            zIndex: "999",
+          }}
+          size={24}
+          color={"#4C5264"}
+          onClick={goBack}
+        />
+        <Title isPlayer={true}>{children}</Title>
+      </PlayerHeaderContainer>
+    );
+  }
+);

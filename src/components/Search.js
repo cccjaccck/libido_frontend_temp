@@ -30,6 +30,7 @@ const SEARCH_ROOMS = gql`
         type
       }
       watchingCount
+      isMine
     }
   }
 `;

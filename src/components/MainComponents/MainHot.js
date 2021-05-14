@@ -26,6 +26,7 @@ export const GET_LIVES = gql`
         type
       }
       watchingCount
+      isMine
     }
   }
 `;
@@ -89,7 +90,10 @@ const renderVideos = (videos) =>
 
 const MainHot = () => {
   const [recommendations, setRecommendations] = useState([]);
-  const { data } = useQuery(GET_LIVES);
+  const { data } = useQuery(GET_LIVES, {
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: "network-only",
+  });
   const [joinRoomMutation] = useMutation(JOIN_ROOM);
   const [id, setId] = useState();
   const [url, setUrl] = useState();

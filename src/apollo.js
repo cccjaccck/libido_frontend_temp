@@ -20,16 +20,11 @@ export const logUserOut = () => {
 };
 
 const uploadHttpLink = createUploadLink({
-  // uri: "http://localhost:4000/graphql",
-  uri: "http://192.168.123.105:4000/graphql",
-  // process.env.NODE_ENV === "production"
-  //   ? "https://my.domain/graphql"
-  //   : "http://localhost:4000/graphql",
+  uri: "http://15.165.249.223:4000/graphql",
 });
 
 const wsLink = new WebSocketLink({
-  // uri: "ws://localhost:4000/graphql",
-  uri: "ws://192.168.123.105:4000/graphql",
+  uri: "ws://15.165.249.223:4000/graphql",
   options: {
     connectionParams: () => ({
       token: localStorage.getItem(TOKEN),
@@ -62,11 +57,5 @@ const splitLink = split(
 
 export const client = new ApolloClient({
   link: splitLink,
-  cache: new InMemoryCache({
-    // typePolicies: {
-    //   User: {
-    //     keyFields: false,
-    //   },
-    // },
-  }),
+  cache: new InMemoryCache(),
 });

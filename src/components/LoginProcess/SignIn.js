@@ -11,7 +11,7 @@ import { logUserIn } from "../../apollo";
 const Wrapper = styled.div`
   width: 100%;
   height: 100vh;
-  background: #fff;
+  background: ${(props) => props.theme.themeColor};
   @media only screen and (min-width: 425px) {
     width: 425px;
     margin: 0 auto;

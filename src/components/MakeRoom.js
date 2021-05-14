@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import useInput from "../hooks/useInput";
 import useUser from "../hooks/useUser";
+import { copyToClipboard } from "../utils";
 import { getYoutubeSearch } from "../videos";
 import { H6Button } from "./MainComponents/Buttons";
 import { HeaderSearch } from "./MainComponents/Header";
@@ -183,12 +184,18 @@ const MakeRoom = ({ location }) => {
   // url 복사
   const copyUrl = () => {
     if (userData?.seeMe.id) {
-      navigator.clipboard
-        .writeText(`${window.location.origin}/player/${userData?.seeMe.id}`)
-        .then(
-          () => alert("복사 하였습니다."),
-          () => alert("복사에 실패하였습니다. 잠시 후 다시 시도해주세요.")
-        );
+      copyToClipboard(
+        `${window.location.origin}/player/${userData?.seeMe.id}`
+      ).then(
+        () => alert("복사 하였습니다."),
+        () => alert("복사에 실패하였습니다. 잠시 후 다시 시도해주세요.")
+      );
+      // navigator.clipboard
+      //   .writeText(`${window.location.origin}/player/${userData?.seeMe.id}`)
+      //   .then(
+      //     () => alert("복사 하였습니다."),
+      //     () => alert("복사에 실패하였습니다. 잠시 후 다시 시도해주세요.")
+      //   );
     } else {
       alert("복사에 실패하였습니다. 잠시 후 다시 시도해주세요.");
     }
