@@ -1,10 +1,8 @@
-import {
-  ApolloClient,
-  createHttpLink,
-  InMemoryCache,
-  makeVar,
-} from "@apollo/client";
+import { ApolloClient, InMemoryCache, makeVar, split } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
+import { createUploadLink } from "apollo-upload-client";
+import { WebSocketLink } from "@apollo/client/link/ws";
+import { getMainDefinition } from "@apollo/client/utilities";
 
 const TOKEN = "TOKEN";
 
@@ -17,15 +15,28 @@ export const logUserIn = (token) => {
 
 export const logUserOut = () => {
   localStorage.removeItem(TOKEN);
-  window.location.reload();
+  isLoggedInVar(false);
+  window.location.replace("/signIn");
 };
 
-const httpLink = createHttpLink({
-  uri: "http://localhost:4000/graphql",
+const uploadHttpLink = createUploadLink({
+  // uri: "http://localhost:4000/graphql",
+  uri: "http://192.168.123.105:4000/graphql",
   // process.env.NODE_ENV === "production"
-  //   ? "https://instaclone-backend-sexy.herokuapp.com/graphql"
+  //   ? "https://my.domain/graphql"
   //   : "http://localhost:4000/graphql",
 });
+
+const wsLink = new WebSocketLink({
+  // uri: "ws://localhost:4000/graphql",
+  uri: "ws://192.168.123.105:4000/graphql",
+  options: {
+    connectionParams: () => ({
+      token: localStorage.getItem(TOKEN),
+    }),
+  },
+});
+
 const authLink = setContext((_, { headers }) => {
   return {
     headers: {
@@ -35,12 +46,26 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
+const httpLinks = authLink.concat(uploadHttpLink);
+
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription"
+    );
+  },
+  wsLink,
+  httpLinks
+);
+
 export const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: splitLink,
   cache: new InMemoryCache({
     // typePolicies: {
     //   User: {
-    //     keyFields: (obj) => `User:${obj.username}`,
+    //     keyFields: false,
     //   },
     // },
   }),

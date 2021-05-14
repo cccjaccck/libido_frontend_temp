@@ -1,141 +1,88 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import styled from 'styled-components';
-import MakeRoom from './components/MakeRoom';
-import Player from './components/Player';
-import Setting from './components/Setting';
-import MyStudio from './components/MyStudio';
-import FriendSearch from './components/FriendSearch';
-import Search from './components/Search';
-import MainMore from './components/MainMore';
-import Main from './components/Main';
-import ForgotPassword from './components/LoginProcess/ForgotPassword';
-import Register from './components/LoginProcess/Register';
-import SignIn from './components/LoginProcess/SignIn';
-import Splash from './components/Splash';
+import React from "react";
+import { useReactiveVar } from "@apollo/client";
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from "react-router-dom";
+import MakeRoom from "./components/MakeRoom";
+import Player from "./components/Player";
+import Setting from "./components/Setting";
+import MyStudio from "./components/MyStudio";
+import FriendSearch from "./components/FriendSearch";
+import Search from "./components/Search";
+import {
+  MainMoreRecommendation,
+  MainMoreStreaming,
+} from "./components/MainMore";
+import Main from "./components/Main";
+import ForgotPassword from "./components/LoginProcess/ForgotPassword";
+import Register from "./components/LoginProcess/Register";
+import SignIn from "./components/LoginProcess/SignIn";
+import Splash from "./components/Splash";
+import UserProfile from "./components/UserProfile";
+import { isLoggedInVar } from "./apollo";
 
-const Container = styled.div`
-  width: 100%;
-  height: 100vh;
-  background: #fff;
-  @media only screen and ( min-width: 425px ) {
-    width: 425px;
-    margin: 0 auto;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, .12);
-  }
-`;
+const MainRoute = (props) => <Main {...props} />;
 
-const PlayerContainer = styled.div`
-  width: 100vw;
-  height: 100vh;
-  background: #ff0000;
-`;
+const RecommendationRoute = (props) => (
+  <MainMoreRecommendation pageTitle={"Recommendation"} {...props} />
+);
+
+const StreamingRoute = (props) => (
+  <MainMoreStreaming pageTitle={"Streaming"} {...props} />
+);
+
+const SearchRoute = (props) => <Search {...props} />;
+
+const MyStudioRoute = ({ match }) => (
+  <>
+    <Route exact path={match.path} component={MyStudio} />
+    <Route path={`${match.path}/setting`} component={Setting} />
+  </>
+);
+const UserProfileRoute = (props) => <UserProfile {...props} />;
+const MakeRoomRoute = (props) => <MakeRoom {...props} />;
+const FriendSearchRoute = (props) => <FriendSearch {...props} />;
+const PlayerRoute = (props) => <Player {...props} />;
 
 const LoggedInRoutes = () => {
-    return (
-        <Router>
-            <Switch>
-                <Route exact path="/">
-                    <Container>
-                        <Main />
-                    </Container>
-                </Route>
-                <Route path="/mainRecommendation">
-                    <Container>
-                        <MainMore
-                            pageTitle={'Recommendation'}
-                        />
-                    </Container>
-                </Route>
-                <Route path="/mainStreaming">
-                    <Container>
-                        <MainMore
-                            pageTitle={'Streaming'}
-                        />
-                    </Container>
-                </Route>
-                <Route path="/search">
-                    <Container>
-                        <Search />
-                    </Container>
-                </Route>
-                <Route path="/myStudio">
-                    <Container>
-                        <MyStudio />
-                    </Container>
-                </Route>
-                <Route path="/makeRoom">
-                    <Container>
-                        <MakeRoom />
-                    </Container>
-                </Route>
-                <Route path="/friendSearch">
-                    <Container>
-                        <FriendSearch />
-                    </Container>
-                </Route>
-                <Route path="/setting">
-                    <Container>
-                        <Setting />
-                    </Container>
-                </Route>
-                <Route path="/player">
-                    <PlayerContainer>
-                        <Player />
-                    </PlayerContainer>
-                </Route>
-                <Redirect from="*" to="/" />
-            </Switch>
-        </Router>
-    )
+  return (
+    <Router>
+      <Switch>
+        <Route exact path="/" component={MainRoute} />
+        <Route path="/mainRecommendation" component={RecommendationRoute} />
+        <Route path="/mainStreaming" component={StreamingRoute} />
+        <Route path="/search" component={SearchRoute} />
+        <Route path="/myStudio" component={MyStudioRoute} />
+        <Route path="/makeRoom" component={MakeRoomRoute} />
+        <Route path="/friendSearch" component={FriendSearchRoute} />
+        <Route path="/player/:id" component={PlayerRoute} />
+        <Route path="/user/:id" component={UserProfileRoute} />
+        <Redirect from="*" to="/" />
+      </Switch>
+    </Router>
+  );
 };
 
-const LoggedOutRoutes = ({ isLoggedIn, onClick}) => {
-    return (
-        <Router>
-            <Switch>
-                <Route exact path="/">
-                    <Container>
-                        <Splash />
-                    </Container>
-                </Route>
-                <Route path="/signIn">
-                    <Container>
-                        <SignIn
-                            isLoggedIn={isLoggedIn}
-                            onClick={onClick}
-                        />
-                    </Container>
-                </Route>
-                <Route path="/register">
-                    <Container>
-                        <Register />
-                    </Container>
-                </Route>
-                <Route path="/forgotPassword">
-                    <Container>
-                        <ForgotPassword />
-                    </Container>
-                </Route>
-            </Switch>
-        </Router>
-    );
-}
+const LoggedOutRoutes = () => {
+  return (
+    <Router>
+      <Switch>
+        <Route exact path="/" component={Splash} />
+        <Route path="/signIn" component={SignIn} />
+        <Route path="/register" component={Register} />
+        <Route path="/forgotPassword" component={ForgotPassword} />
+      </Switch>
+    </Router>
+  );
+};
 
 const AppRouter = () => {
-    const [ isLoggedIn, setIsLoggedIn ] = useState(false);
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
 
-    const onClickLoggedInTrue = () => {
-        setIsLoggedIn(true);
-    }
-
-    return isLoggedIn ? 
-        <LoggedInRoutes /> 
-        :
-        <LoggedOutRoutes
-            isLoggedIn={isLoggedIn}
-            onClick={onClickLoggedInTrue}
-        />;
-}
+  return isLoggedIn ? <LoggedInRoutes /> : <LoggedOutRoutes />;
+};
 
 export default AppRouter;

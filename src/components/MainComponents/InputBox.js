@@ -19,6 +19,7 @@ const InputBox = styled.input`
     p.bottomRadius ? p.bottomRadius : "none"};
   margin: ${(p) => (p.margin ? p.margin : "16px 8px")};
   padding-left: 16px;
+  padding-right: 25%;
   ::placeholder {
     color: rgba(0, 0, 0, 0.6);
   }
@@ -176,32 +177,45 @@ export const CustomInput = ({
   margin,
   withBtn,
   btnText,
+  btnOnClick,
   checkboxClicked,
+  onChange,
+  value,
+  ref,
 }) => {
   return (
     <InputWrapper>
       <InputBox
+        ref={ref}
         type={type ? type : "text"}
         placeholder={placeholder}
         bgColor={bgColor}
         border={border}
         bottomRadius={bottomRadius}
         margin={margin}
+        onChange={onChange}
+        value={value}
       />
       <CheckBoxWrapper checkbox={checkbox}>
         <CheckBoxLabel>{label}</CheckBoxLabel>
         <CheckBoxBtn type={"checkbox"} onClick={() => checkboxClicked()} />
       </CheckBoxWrapper>
-      <Btn withBtn={withBtn}>{btnText}</Btn>
+      <Btn onClick={btnOnClick} withBtn={withBtn}>
+        {btnText}
+      </Btn>
     </InputWrapper>
   );
 };
 
-export const ChatInput = () => {
+export const ChatInput = ({ onChange, onClick, value }) => {
   return (
     <ChatInputWrapper>
-      <ChatInputBox placeholder={"Type you message"} />
-      <ChatSend />
+      <ChatInputBox
+        value={value}
+        onChange={onChange}
+        placeholder={"Type you message"}
+      />
+      <ChatSend onClick={onClick} />
     </ChatInputWrapper>
   );
 };

@@ -6,7 +6,10 @@ const useInput = (defaultValue) => {
     e.preventDefault();
     setValue(e.target.value);
   };
-  return { value, onChange };
+  const resetValue = () => {
+    setValue("");
+  };
+  return { value, onChange, resetValue, setValue };
 };
 
 export default useInput;

@@ -1,12 +1,12 @@
-import React, { useRef } from "react";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import React from "react";
+import { gql, useQuery } from "@apollo/client";
 import styled from "styled-components";
-import { HeaderWithSetting } from "./MainComponents/Header";
+import { HeaderNoBtn } from "./MainComponents/Header";
 import ProfileCircle from "./MainComponents/ProfileCircle";
 import { AiOutlinePlus } from "react-icons/ai";
-import useUser from "../hooks/useUser";
 import useInput from "../hooks/useInput";
 import { addCommas } from "../utils";
+import { SEE_STAT } from "./MyStudio";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -145,68 +145,36 @@ const StatInfo = styled.div`
   text-align: center;
 `;
 
-const UPLOAD_AVATAR = gql`
-  mutation uploadAvatar($file: Upload) {
-    uploadAvatar(file: $file) {
-      ok
-      error
+const SEE_USER = gql`
+  query seeUser($id: String!) {
+    seeUser(id: $id) {
+      id
+      username
+      avatar
+      viewCount
+      followingCount
     }
   }
 `;
 
-export const SEE_STAT = gql`
-  query seeStat($id: String, $time: Time) {
-    seeStat(id: $id, time: $time) {
-      totalComments
-      totalRooms
-      totalVideos
-      totalWatchingTime
-    }
-  }
-`;
-
-const MyStudio = () => {
+const UserProfile = ({ match }) => {
+  const {
+    params: { id },
+  } = match;
   const time = useInput("MONTH");
-  const inputFile = useRef(null);
-  const { data: userData } = useUser();
-
+  const { data: userData } = useQuery(SEE_USER, { variables: { id } });
   const { data: userStat } = useQuery(SEE_STAT, {
-    variables: { time: time.value },
+    variables: { time: time.value, id },
   });
-
-  const [upload, { loading }] = useMutation(UPLOAD_AVATAR, {
-    onCompleted: (d) => window.location.reload(),
-  });
-
-  const onUploadClick = () => {
-    if (loading) {
-      return;
-    }
-    inputFile.current.click();
-  };
-  const onChange = ({
-    target: {
-      validity,
-      files: [file],
-    },
-  }) => validity.valid && upload({ variables: { file } });
 
   return (
     <Wrapper>
       <Container>
-        <HeaderWithSetting to="/myStudio/setting">My Studio</HeaderWithSetting>
-        <ProfileSection onClick={onUploadClick}>
-          <input
-            type="file"
-            accept="image/jpg, image/png, image/jpeg"
-            style={{ display: "none" }}
-            ref={inputFile}
-            onChange={onChange}
-          />
-          <ProfileCircle size={"100px"} imgSource={userData?.seeMe?.avatar} />
-          <ProfilePlus>
-            <AiOutlinePlus />
-          </ProfilePlus>
+        <HeaderNoBtn to="/myStudio/setting">
+          {userData?.seeUser?.username}
+        </HeaderNoBtn>
+        <ProfileSection>
+          <ProfileCircle size={"100px"} imgSource={userData?.seeUser?.avatar} />
         </ProfileSection>
         <StatsTitle>
           Stats
@@ -258,4 +226,4 @@ const MyStudio = () => {
   );
 };
 
-export default MyStudio;
+export default UserProfile;

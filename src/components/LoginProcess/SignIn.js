@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
 import styled from "styled-components";
@@ -7,6 +7,17 @@ import { EmailInput, PassInput } from "../MainComponents/InputBox";
 import PageTitle from "./PageTitle";
 import useInput from "../../hooks/useInput";
 import { logUserIn } from "../../apollo";
+
+const Wrapper = styled.div`
+  width: 100%;
+  height: 100vh;
+  background: #fff;
+  @media only screen and (min-width: 425px) {
+    width: 425px;
+    margin: 0 auto;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+  }
+`;
 
 const Container = styled.div`
   width: 100%;
@@ -26,45 +37,59 @@ const ForgotLink = styled.button`
 
 const LOGIN = gql`
   mutation login($email: String!, $password: String!) {
-    login(email: $email, password: $password)
+    login(email: $email, password: $password) {
+      ok
+      token
+      error
+    }
   }
 `;
 
 const SignIn = () => {
   const email = useInput();
   const password = useInput();
+
+  const onCompleted = ({ login }) => {
+    if (login && login.ok) {
+      logUserIn(login.token);
+    } else {
+      alert(login.error);
+    }
+  };
+
   const [loginMutation] = useMutation(LOGIN, {
     variables: {
       email: email.value,
       password: password.value,
     },
+    onCompleted,
   });
 
-  const handleLogin = async () => {
-    try {
-      if (email.value && password.value) {
-        const {
-          data: { login: token },
-        } = await loginMutation();
-        logUserIn(token);
-      }
-    } catch (e) {
-      alert(e);
-    }
+  const login = () => {
+    if (
+      email.value &&
+      email.value !== "" &&
+      password.value &&
+      password.value !== ""
+    )
+      loginMutation();
   };
+
   return (
-    <Container>
-      <PageTitle>Sign In</PageTitle>
-      <EmailInput onChange={email.onChange} />
-      <PassInput placeholder={"Password"} onChange={password.onChange} />
-      <Link to="/forgotPassword">
-        <ForgotLink>Forgot password?</ForgotLink>
-      </Link>
-      <H6Button onClick={handleLogin}>SIGN IN</H6Button>
-      <Link to="/register">
-        <H6Button>REGISTER</H6Button>
-      </Link>
-    </Container>
+    <Wrapper>
+      <Container>
+        <PageTitle>Sign In</PageTitle>
+        <EmailInput onChange={email.onChange} />
+        <PassInput placeholder={"Password"} onChange={password.onChange} />
+        <Link to="/forgotPassword">
+          <ForgotLink>Forgot password?</ForgotLink>
+        </Link>
+        <H6Button onClick={login}>SIGN IN</H6Button>
+        <Link to="/register">
+          <H6Button>REGISTER</H6Button>
+        </Link>
+      </Container>
+    </Wrapper>
   );
 };
 
